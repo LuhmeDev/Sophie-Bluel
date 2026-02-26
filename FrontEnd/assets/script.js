@@ -47,6 +47,9 @@ class Filtre {
     const button = document.createElement("button");
     button.textContent = this.name;
     button.classList.add("filtre-btn");
+    button.addEventListener("click", () => {
+      console.log("je clique");
+    });
     return button;
   }
 }
