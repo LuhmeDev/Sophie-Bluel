@@ -275,7 +275,24 @@ footer nav ul {
   height: 37px;
   border: 1px solid #1d6154;
   background-color: white;
+  color: #1d6154;
   border-radius: 60px;
+}
+
+#filtrecontainer button:hover {
+  height: 37px;
+  border: 1px solid #1d6154;
+  background-color: #1d6154;
+  border-radius: 60px;
+  color: #ffffff;
+}
+
+#filtrecontainer button.active {
+  height: 37px;
+  border: 1px solid #1d6154;
+  background-color: #1d6154;
+  border-radius: 60px;
+  color: white;
 }
 
 .filtre-btn {
@@ -285,6 +302,8 @@ font-size: 16px;
 line-height: 100%;
 letter-spacing: 0%;
 text-align: center;
-color: #1d6154;
 padding: 0px 12px;
 }
+
+
+
