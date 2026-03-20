@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Sophie Bluel - Architecte d'intérieur</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,6 +13,13 @@
     />
     <meta name="description" content="" />
     <link rel="stylesheet" href="./assets/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
   <body>
     <header>
@@ -20,7 +28,7 @@
         <ul>
           <li>projets</li>
           <li>contact</li>
-          <li>login</li>
+          <li><a href="./login.html">login</a></li>
           <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
         </ul>
       </nav>
@@ -50,7 +58,13 @@
         </article>
       </section>
       <section id="portfolio">
+        <div id="projet-container">
         <h2>Mes Projets</h2>
+        <div id="btn-open-popup-container">
+        <button id="btn-open-popup"><i class="fa-regular fa-pen-to-square"></i></button>
+        <p id="text-open-popup">modifier</p>
+        </div>
+        </div>
         <div id="filtrecontainer"></div>
         <div id="gallery"></div>
       </section>
@@ -67,6 +81,18 @@
           <input type="submit" value="Envoyer" />
         </form>
       </section>
+
+      <div id="modal">
+        <section id="popup">
+          <button id="btn-close-popup">✕</button>
+          <h3>Galerie photo</h3>
+          <div id="popup-gallery"></div>
+          <div id="popup-button-container">
+          <button id="popup-button">Ajouter une photo</button>
+          <!-- <input type="button" value="" > -->
+          </div>
+        </section>
+      </div>
       <script src="./assets/script.js"></script>
     </main>
 

@@ -35,6 +35,21 @@ class Projet {
     // Retourne la figure complète pour l'injecter dans le DOM
     return figure;
   }
+  createPopupHTML() {
+    const img = document.createElement("img");
+    img.src = this.imageUrl;
+    img.alt = this.title;
+    return img;
+  }
+
+static chargerProjets(data) {
+  const gallery = document.getElementById("gallery");
+  data.forEach((work) => {
+    const projet = new Projet(work.id, work.userId, work.title, work.imageUrl, work.category);
+    app.projets.push(projet); // ← app.projets
+    gallery.appendChild(projet.createGalleryHTML());
+  });
+}
 }
 
 class Filtre {
@@ -44,90 +59,127 @@ class Filtre {
   }
 
   createFiltreHTML() {
-    const button = document.createElement("button"); // Crée un bouton
-    button.textContent = this.name; // ajoute le texte du bouton
-    button.classList.add("filtre-btn"); // ajoute une class
-    button.dataset.id = this.id; // Stocke l'id de la catégorie dans le bouton
+    const button = document.createElement("button");
+    button.textContent = this.name;
+    button.classList.add("filtre-btn");
+    button.dataset.id = this.id;
     button.addEventListener("click", () => {
-      // ajoute un éveènement lorsque je clique sur le bouton
-      filtrerProjets(this.id); // Appelle la fonction de filtrage avec l'id
-      setActiveButton(button); // Met à jour le bouton actif
+      this.filtrerProjets(this.id);
+      this.setActiveButton(button);
     });
 
-    // retourne le boutton pour l'injecter dans le DOM
     return button;
   }
-}
 
-const projets = [];
-const filtres = [];
-
-fetch("http://localhost:5678/api/works")
-  .then((response) => response.json())
-  .then((data) => {
-    console.log("data de l'api", data);
-
-    const gallery = document.getElementById("gallery"); // const pour récuprér la div gallery ou je vais injecter tous les nouveaux projets
-
-    data.forEach((work) => {
-      const projet = new Projet(
-        work.id,
-        work.userId,
-        work.title,
-        work.imageUrl,
-        work.category,
-      ); // Nouvelle instance pour chaque projet en récupérant la class projet créer pour et s'en servir de partern d'instance
-      projets.push(projet); // push le nouveau projet dans le tableau projets
-
-      gallery.appendChild(projet.createGalleryHTML()); // Injection dans le DOM
-    });
-
-    console.log("projet :", projets); // Toutes tes instances
-  });
-
-fetch("http://localhost:5678/api/categories")
-  .then((response) => response.json())
-  .then((data) => {
-    const filtrecontainer = document.getElementById("filtrecontainer");
-
-    const buttonTous = document.createElement("button");
-    buttonTous.textContent = "Tous";
-    buttonTous.classList.add("filtre-btn", "active"); // Actif par défaut
-    buttonTous.addEventListener("click", () => {
-      filtrerProjets(null); // null = afficher tout
-      setActiveButton(buttonTous);
-    });
-    filtrecontainer.appendChild(buttonTous);
-
-    data.forEach((category) => {
-      const filtre = new Filtre(category.id, category.name);
-
-      filtres.push(filtre);
-
-      filtrecontainer.appendChild(filtre.createFiltreHTML());
-    });
-    console.log("filtres", filtres);
-  });
-
-// Fonction de filtrage
-function filtrerProjets(categoryId) {
+filtrerProjets(categoryId) {
   const gallery = document.getElementById("gallery");
-  gallery.innerHTML = ""; // Vide la galerie
-
+  gallery.innerHTML = "";
   const projetsFiltres =
     categoryId === null
-      ? projets // Si "Tous", affiche tout
-      : projets.filter((p) => p.category.id === categoryId); // Sinon filtre par id
-
-  projetsFiltres.forEach((projet) => {
+      ? app.projets // ← app.projets
+      : app.projets.filter((p) => p.category.id === categoryId);
+  projetsFiltres.forEach((projet) => {       // ← manquait
     gallery.appendChild(projet.createGalleryHTML());
   });
 }
 
-// Fonction pour gérer le bouton actif (optionnel mais recommandé pour le CSS)
-function setActiveButton(activeButton) {
-  document.querySelectorAll(".filtre-btn").forEach((btn) => {
-    btn.classList.remove("active");
+  setActiveButton(activeButton) {
+    document.querySelectorAll(".filtre-btn").forEach((btn) => {
+      btn.classList.remove("active");
+    });
+    activeButton.classList.add("active");
+  }
+static chargerFiltres(data) {
+  const filtrecontainer = document.getElementById("filtrecontainer");
+
+  const buttonTous = document.createElement("button"); // ← manquait
+  buttonTous.textContent = "Tous";
+  buttonTous.classList.add("filtre-btn", "active");
+  buttonTous.addEventListener("click", () => {
+    const filtreTous = new Filtre(null, "Tous");
+    filtreTous.filtrerProjets(null);
+    filtreTous.setActiveButton(buttonTous);
   });
-  activeButton.classList.add("active");
+  filtrecontainer.appendChild(buttonTous);
+
+  data.forEach((category) => {
+    const filtre = new Filtre(category.id, category.name);
+    app.filtres.push(filtre);
+    filtrecontainer.appendChild(filtre.createFiltreHTML());
+  });
 }
+}
+
+class Popup {
+  constructor(modalId, popupGalleryId, btnOpenId, btnCloseId) {
+    this.modal = document.getElementById(modalId);
+    this.popupGallery = document.getElementById(popupGalleryId);
+    this.btnOpen = document.getElementById(btnOpenId);
+    this.btnClose = document.getElementById(btnCloseId);
+
+    this.btnOpen.addEventListener("click", () => this.open());
+    this.btnClose.addEventListener("click", () => this.close());
+    window.addEventListener("click", (e) => {
+      if (e.target === this.modal) this.close();
+    });
+  }
+
+  open() {
+    this.populateGallery();
+    this.modal.style.display = "flex";
+  }
+
+  close() {
+    this.modal.style.display = "none";
+  }
+
+populateGallery() {
+  this.popupGallery.innerHTML = "";
+  app.projets.forEach((projet) => { // ← app.projets
+    this.popupGallery.appendChild(projet.createPopupHTML());
+  });
+}
+}
+
+class Api {
+  static fetchWorks() {
+    return fetch("http://localhost:5678/api/works").then((response) =>
+      response.json()
+    );
+  }
+
+  static fetchCategories() {
+    return fetch("http://localhost:5678/api/categories").then((response) =>
+      response.json()
+    );
+  }
+
+static chargerTout() {
+  Promise.all([Api.fetchWorks(), Api.fetchCategories()]).then(
+    ([works, categories]) => {
+      Projet.chargerProjets(works);
+      Filtre.chargerFiltres(categories);
+      console.log("projets :", app.projets); // ← app.projets
+      console.log("filtres :", app.filtres); // ← app.filtres
+    }
+  );
+}
+}
+
+class App {
+  constructor() {
+    this.projets = [];
+    this.filtres = [];
+    this.popup = new Popup("modal", "popup-gallery", "btn-open-popup-container", "btn-close-popup");
+  }
+
+  init() {
+    Api.chargerTout();
+  }
+}
+
+const app = new App();
+app.init();
+
+
+ 
