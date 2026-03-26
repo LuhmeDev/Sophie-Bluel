@@ -111,8 +111,8 @@ static chargerFiltres(data) {
 }
 
 class Popup {
-  constructor(modalId, popupGalleryId, btnOpenId, btnCloseId) {
-    this.modal = document.getElementById(modalId);
+  constructor(popupContainerId, popupGalleryId, btnOpenId, btnCloseId) {
+    this.popupContainer = document.getElementById(popupContainerId);
     this.popupGallery = document.getElementById(popupGalleryId);
     this.btnOpen = document.getElementById(btnOpenId);
     this.btnClose = document.getElementById(btnCloseId);
@@ -120,17 +120,17 @@ class Popup {
     this.btnOpen.addEventListener("click", () => this.open());
     this.btnClose.addEventListener("click", () => this.close());
     window.addEventListener("click", (e) => {
-      if (e.target === this.modal) this.close();
+      if (e.target === this.popupContainer) this.close();
     });
   }
 
   open() {
     this.populateGallery();
-    this.modal.style.display = "flex";
+    this.popupContainer.style.display = "flex";
   }
 
   close() {
-    this.modal.style.display = "none";
+    this.popupContainer.style.display = "none";
   }
 
 populateGallery() {
@@ -170,7 +170,7 @@ class App {
   constructor() {
     this.projets = [];
     this.filtres = [];
-    this.popup = new Popup("modal", "popup-gallery", "btn-open-popup-container", "btn-close-popup");
+    this.popup = new Popup("popup-container", "popup-gallery", "btn-open-popup-container", "btn-close-popup");
   }
 
   init() {

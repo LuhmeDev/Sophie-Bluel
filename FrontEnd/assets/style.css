@@ -305,9 +305,6 @@ text-align: center;
 padding: 0px 12px;
 }
 
-#boby-login{
-  background-color: #FFFEF8;
-}
 #login{
   display: flex;
   flex-direction: column;
@@ -396,14 +393,14 @@ h3{
   padding: 40px 0px;
 }
 
-#modal {
+#popupContainer {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2); /* fond sombre 20% opacité */
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   z-index: 1000;
