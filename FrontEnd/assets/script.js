@@ -78,7 +78,7 @@ filtrerProjets(categoryId) {
     categoryId === null
       ? app.projets // ← app.projets
       : app.projets.filter((p) => p.category.id === categoryId);
-  projetsFiltres.forEach((projet) => {       // ← manquait
+  projetsFiltres.forEach((projet) => {       
     gallery.appendChild(projet.createGalleryHTML());
   });
 }
@@ -92,7 +92,7 @@ filtrerProjets(categoryId) {
 static chargerFiltres(data) {
   const filtrecontainer = document.getElementById("filtrecontainer");
 
-  const buttonTous = document.createElement("button"); // ← manquait
+  const buttonTous = document.createElement("button"); 
   buttonTous.textContent = "Tous";
   buttonTous.classList.add("filtre-btn", "active");
   buttonTous.addEventListener("click", () => {
