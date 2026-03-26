@@ -393,7 +393,7 @@ h3{
   padding: 40px 0px;
 }
 
-#popupContainer {
+#popup-container {
   position: fixed;
   top: 0;
   left: 0;
