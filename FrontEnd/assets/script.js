@@ -44,7 +44,8 @@ class Projet {
 
     const btnDelete = document.createElement("button");
     const icon = document.createElement("i");
-    icon.classList.add("fa-solid", "fa-trash-can");
+    btnDelete.classList.add("suppr-work-btn");
+    icon.classList.add("fa-solid", "fa-trash-can", "supp-icon-btn");
     btnDelete.appendChild(icon);
     btnDelete.addEventListener("click", () => {
       Api.deleteWork(this.id).then(() => {

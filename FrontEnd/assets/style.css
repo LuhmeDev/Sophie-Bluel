@@ -404,15 +404,13 @@ h3 {
 
 #popup,
 #popup-ajout {
-  width: 630px;
-  height: 670px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: white;
   border-radius: 10px;
-  padding: 10px;
+  padding: 20px 60px;
 }
 
 #popup-gallery img {
@@ -422,7 +420,8 @@ h3 {
 #popup-gallery {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  row-gap: 30px;
+  column-gap: 10px;
   border-bottom: 1px solid #B3B3B3;
   padding: 40px 0px;
 }
@@ -444,12 +443,12 @@ h3 {
 
 #btn-close-popup,
 #btn-close-ajout {
-  position: relative;
-  left: 292px;
-  top: 10px;
   background-color: transparent;
   border: none;
   font-weight: bold;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 #popup-button-container {
@@ -536,4 +535,36 @@ h3 {
     letter-spacing: 0%;
     text-align: center;
 
+}
+
+.suppr-work-btn {
+    border: none;
+    background-color: black;
+    border-radius: 2px;
+    color: white;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.supp-icon-btn{
+   scale: 0.8; 
+}
+
+#popup-gallery figure {
+  position: relative;
+  overflow: hidden;
+}
+
+#popup-gallery figure button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+#popup-gallery figure img {
+  object-fit: cover;
+  display: block;
 }
