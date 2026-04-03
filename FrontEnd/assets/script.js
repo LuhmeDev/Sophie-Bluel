@@ -59,7 +59,7 @@ class Projet {
         app.projets.forEach((projet) => {
           gallery.appendChild(projet.createGalleryHTML());
         });
-      });
+      }).catch((err) => console.error("Erreur suppression :", err));
     });
 
     figure.appendChild(img);
@@ -281,14 +281,14 @@ class Api {
   }
 
   static chargerTout() {
-    Promise.all([Api.fetchWorks(), Api.fetchCategories()]).then(
-      ([works, categories]) => {
-        Projet.chargerProjets(works);
-        Filtre.chargerFiltres(categories);
-        console.log("projets :", app.projets); // ← app.projets
-        console.log("filtres :", app.filtres); // ← app.filtres
-      }
-    );
+      Promise.all([Api.fetchWorks(), Api.fetchCategories()]).then(
+        ([works, categories]) => {
+          Projet.chargerProjets(works);
+          Filtre.chargerFiltres(categories);
+          console.log("projets :", app.projets); 
+          console.log("filtres :", app.filtres); 
+        }
+      ).catch((err) => console.error("Erreur de chargement :", err));
   }
 
   static login(email, password) {
@@ -310,9 +310,10 @@ class Api {
 class Login {
   constructor() {
     this.token = localStorage.getItem("token");
-    this.loginLink = document.getElementById("nav-login");
+    this.loginNav = document.getElementById("nav-login");
     this.btnPopup = document.getElementById("btn-open-popup-container");
     this.filtreContainer = document.getElementById("filtrecontainer");
+    this.editMode = document.getElementById("edit-mode-container");
   }
 
   submitLogin() {
@@ -320,9 +321,7 @@ class Login {
     const form = document.getElementById("login-form");
 
     if (btnLogin) btnLogin.addEventListener("click", () => this.handleSubmit());
-    if (form) form.addEventListener("submit", () => {
-      this.handleSubmit();
-    });
+    if (form) form.addEventListener("submit", () => { this.handleSubmit();});
   }
 
   handleSubmit() {
@@ -342,29 +341,57 @@ class Login {
       });
   }
 
+  /**
+   * Met à jour le lien de navigation selon l'état de connexion.
+   * - Connecté → affiche "logout" et gère la déconnexion au clic.
+   * - Non connecté → affiche "login".
+   */
   checkAuth() {
-    if (!this.loginLink) return;
+    if (!this.loginNav) return;
 
     if (this.token) {
-      this.loginLink.textContent = "logout";
-      this.loginLink.addEventListener("click", (e) => {
+      this.loginNav.textContent = "logout";
+      this.loginNav.addEventListener("click", (e) => {
         e.preventDefault()
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         window.location.href = "index.html";
       });
     } else {
-      this.loginLink.textContent = "login";
+      this.loginNav.textContent = "login";
     }
   }
 
+  /**
+ * Adapte l'interface selon que l'utilisateur est connecté ou non.
+ * - Connecté → affiche le bouton popup et le mode édition, masque les filtres.
+ * - Non connecté → masque le bouton popup et le mode édition, affiche les filtres.
+ */
   updateUI() {
-    if (this.token) {
-      if (this.btnPopup) this.btnPopup.style.display = "flex";
-      if (this.filtreContainer) this.filtreContainer.style.display = "none";
-    } else {
-      if (this.btnPopup) this.btnPopup.style.display = "none";
-      if (this.filtreContainer) this.filtreContainer.style.display = "flex";
+    const isLogged = Boolean(this.token);
+
+    if (this.btnPopup) {
+      if (isLogged) {
+        this.btnPopup.style.display = "flex";
+      } else {
+        this.btnPopup.style.display = "none";
+      }
+    }
+
+    if (this.filtreContainer) {
+      if (isLogged) {
+        this.filtreContainer.style.display = "none";
+      } else {
+        this.filtreContainer.style.display = "flex";
+      }
+    }
+
+    if (this.editMode) {
+      if (isLogged) {
+        this.editMode.style.display = "flex";
+      } else {
+        this.editMode.style.display = "none";
+      }
     }
   }
 }
