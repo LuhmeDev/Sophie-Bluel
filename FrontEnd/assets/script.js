@@ -264,7 +264,8 @@ class Api {
     return fetch(`http://localhost:5678/api/works/${id}`, {
       method: "DELETE",
       headers: {
-        "accept": "*/*"
+        "accept": "*/*",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
       }
     });
   }
@@ -289,21 +290,106 @@ class Api {
       }
     );
   }
+
+  static login(email, password) {
+    return fetch("http://localhost:5678/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "accept": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    }).then((response) => {
+      if (!response.ok) throw new Error("Identifiants invalides");
+      return response.json();
+      // retourne { userId: 1, token: "eyJ..." }
+    });
+  }
+}
+
+class Login {
+  constructor() {
+    this.token = localStorage.getItem("token");
+    this.loginLink = document.getElementById("nav-login");
+    this.btnPopup = document.getElementById("btn-open-popup-container");
+    this.filtreContainer = document.getElementById("filtrecontainer");
+  }
+
+  submitLogin() {
+    const btnLogin = document.getElementById("login-boutton");
+    const form = document.getElementById("login-form");
+
+    if (btnLogin) btnLogin.addEventListener("click", () => this.handleSubmit());
+    if (form) form.addEventListener("submit", () => {
+      this.handleSubmit();
+    });
+  }
+
+  handleSubmit() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("Mdp").value;
+
+    Api.login(email, password)
+      .then((data) => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        window.location.href = "index.html";
+      })
+      .catch((err) => {
+        console.error(err);
+        const msg = document.getElementById("error-msg");
+        if (msg) msg.style.display = "block";
+      });
+  }
+
+  checkAuth() {
+    if (!this.loginLink) return;
+
+    if (this.token) {
+      this.loginLink.textContent = "logout";
+      this.loginLink.addEventListener("click", (e) => {
+        e.preventDefault()
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        window.location.href = "index.html";
+      });
+    } else {
+      this.loginLink.textContent = "login";
+    }
+  }
+
+  updateUI() {
+    if (this.token) {
+      if (this.btnPopup) this.btnPopup.style.display = "flex";
+      if (this.filtreContainer) this.filtreContainer.style.display = "none";
+    } else {
+      if (this.btnPopup) this.btnPopup.style.display = "none";
+      if (this.filtreContainer) this.filtreContainer.style.display = "flex";
+    }
+  }
 }
 
 class App {
   constructor() {
     this.projets = [];
     this.filtres = [];
+    this.login = new Login();
     // this.popup = new Popup("popup-container", "popup-gallery", "btn-open-popup-container", "btn-close-popup");
     // this.popupGalerie = new PopupGalerie();
     // this.popupAjout = new PopupAjout();
   }
 
   init() {
-    Api.chargerTout();
-    this.popupGalerie = new PopupGalerie();
-    this.popupAjout = new PopupAjout();
+    this.login.checkAuth();
+    this.login.updateUI();
+    this.login.submitLogin();
+
+    // On est sur index.html
+    if (document.getElementById("gallery")) {
+      Api.chargerTout();
+      this.popupGalerie = new PopupGalerie();
+      this.popupAjout = new PopupAjout();
+    }
   }
 }
 
