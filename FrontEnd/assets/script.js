@@ -188,6 +188,7 @@ class PopupGalerie extends Popup {
 class PopupAjout extends Popup {
   constructor() {
     super("popup-ajout-container", null, "btn-close-ajout");
+    this.preview = new PreviewUpload("upload-container");
     this.btnValider = document.getElementById("popup-button-valider");
     this.btnValider.addEventListener("click", () => {
       this.submitForm();
@@ -258,9 +259,47 @@ class PopupAjout extends Popup {
         // Ferme la popup et réinitialise le formulaire
         this.close();
         document.getElementById("titre").value = "";
-        fileInput.value = "";
+        this.preview.reset();
       })
       .catch((err) => console.error("Erreur ajout :", err));
+  }
+}
+
+class PreviewUpload {
+  constructor(containerId) {
+    const container = document.getElementById(containerId);
+
+    this.fileInput = document.getElementById("file-input");
+    this.previewImg = container.querySelector("img");
+    this.text = container.querySelector("span");
+
+    this.defaultSrc = this.previewImg.src;
+
+    this.init();
+  }
+
+  init() {
+    this.fileInput.addEventListener("change", () => this.handleChange());
+  }
+
+  handleChange() {
+    const file = this.fileInput.files[0];
+    if (!file) return;
+
+    this.previewImg.src = URL.createObjectURL(file);
+
+    if (this.text) {
+      this.text.style.display = "none";
+    }
+  }
+
+  reset() {
+    this.fileInput.value = "";
+    this.previewImg.src = this.defaultSrc;
+
+    if (this.text) {
+      this.text.style.display = "inline";
+    }
   }
 }
 
