@@ -203,7 +203,7 @@ class PopupAjout extends Popup {
     const select = document.getElementById("select-category");
     select.innerHTML = "";
     Api.fetchCategories().then((categories) => {
-      categories.forEach((category) => {  
+      categories.forEach((category) => {
         const option = document.createElement("option");
         option.value = category.id;
         option.textContent = category.name;
@@ -232,6 +232,11 @@ class PopupAjout extends Popup {
     formData.append("image", image);
 
     // Étape 4 — Envoyer à l'API et mettre à jour l'interface
+
+    const select = document.getElementById("select-category");
+    const categoryId = parseInt(select.value);
+    const categoryName = select.options[select.selectedIndex].text;
+
     Api.addWork(formData)
       .then((newWork) => {
         const projet = new Projet(
@@ -239,7 +244,10 @@ class PopupAjout extends Popup {
           newWork.userId,
           newWork.title,
           newWork.imageUrl,
-          newWork.category
+          {
+            id: categoryId,
+            name: categoryName,
+          }
         );
         app.projets.push(projet); // ajoute au tableau en mémoire
 
