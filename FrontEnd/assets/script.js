@@ -203,7 +203,7 @@ class PopupAjout extends Popup {
     const select = document.getElementById("select-category");
     select.innerHTML = "";
     Api.fetchCategories().then((categories) => {
-      categories.forEach((category) => {
+      categories.forEach((category) => {  
         const option = document.createElement("option");
         option.value = category.id;
         option.textContent = category.name;
@@ -213,37 +213,46 @@ class PopupAjout extends Popup {
   }
 
   submitForm() {
+    // Étape 1 — Récupérer les valeurs des champs du formulaire
     const title = document.getElementById("titre").value;
     const category = document.getElementById("select-category").value;
     const fileInput = document.getElementById("file-input");
     const image = fileInput.files[0];
 
-    // Vérification que tous les champs sont remplis
+    // Étape 2 — Vérifier que tous les champs sont remplis
     if (!title || !category || !image) {
       alert("Veuillez remplir tous les champs !");
-      return;
+      return; // on arrête la fonction ici si un champ est vide
     }
 
-    // FormData construit automatiquement le multipart/form-data
+    // Étape 3 — Construire le FormData
     const formData = new FormData();
     formData.append("title", title);
     formData.append("category", category);
     formData.append("image", image);
 
-    Api.addWork(formData).then((newWork) => {
-      // Ajoute le nouveau projet dans app.projets
-      const projet = new Projet(newWork.id, newWork.userId, newWork.title, newWork.imageUrl, newWork.category);
-      app.projets.push(projet);
+    // Étape 4 — Envoyer à l'API et mettre à jour l'interface
+    Api.addWork(formData)
+      .then((newWork) => {
+        const projet = new Projet(
+          newWork.id,
+          newWork.userId,
+          newWork.title,
+          newWork.imageUrl,
+          newWork.category
+        );
+        app.projets.push(projet); // ajoute au tableau en mémoire
 
-      // Met à jour la galerie principale
-      const gallery = document.getElementById("gallery");
-      gallery.appendChild(projet.createGalleryHTML());
+        // Ajoute directement dans la galerie sans recharger la page
+        const gallery = document.getElementById("gallery");
+        gallery.appendChild(projet.createGalleryHTML());
 
-      // Ferme la popup et réinitialise le formulaire
-      this.close();
-      document.getElementById("titre").value = "";
-      fileInput.value = "";
-    });
+        // Ferme la popup et réinitialise le formulaire
+        this.close();
+        document.getElementById("titre").value = "";
+        fileInput.value = "";
+      })
+      .catch((err) => console.error("Erreur ajout :", err));
   }
 }
 
@@ -270,25 +279,15 @@ class Api {
     });
   }
 
-  static addWork(formData) {
-    return fetch("http://localhost:5678/api/works", {
-      method: "POST",
-      headers: {
-        "accept": "application/json"
-      },
-      body: formData // FormData gère automatiquement le multipart/form-data
-    }).then((response) => response.json());
-  }
-
   static chargerTout() {
-      Promise.all([Api.fetchWorks(), Api.fetchCategories()]).then(
-        ([works, categories]) => {
-          Projet.chargerProjets(works);
-          Filtre.chargerFiltres(categories);
-          console.log("projets :", app.projets); 
-          console.log("filtres :", app.filtres); 
-        }
-      ).catch((err) => console.error("Erreur de chargement :", err));
+    Promise.all([Api.fetchWorks(), Api.fetchCategories()]).then(
+      ([works, categories]) => {
+        Projet.chargerProjets(works);
+        Filtre.chargerFiltres(categories);
+        console.log("projets :", app.projets);
+        console.log("filtres :", app.filtres);
+      }
+    ).catch((err) => console.error("Erreur de chargement :", err));
   }
 
   static login(email, password) {
@@ -303,6 +302,20 @@ class Api {
       if (!response.ok) throw new Error("Identifiants invalides");
       return response.json();
       // retourne { userId: 1, token: "eyJ..." }
+    });
+  }
+
+  static addWork(formData) {
+    return fetch("http://localhost:5678/api/works", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}` // ← manquant
+      },
+      body: formData
+    }).then((response) => {
+      if (!response.ok) throw new Error("Erreur ajout");  // ← manquant aussi
+      return response.json();
     });
   }
 }
@@ -321,7 +334,7 @@ class Login {
     const form = document.getElementById("login-form");
 
     if (btnLogin) btnLogin.addEventListener("click", () => this.handleSubmit());
-    if (form) form.addEventListener("submit", () => { this.handleSubmit();});
+    if (form) form.addEventListener("submit", () => { this.handleSubmit(); });
   }
 
   handleSubmit() {
