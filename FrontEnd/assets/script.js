@@ -48,18 +48,20 @@ class Projet {
     icon.classList.add("fa-solid", "fa-trash-can", "supp-icon-btn");
     btnDelete.appendChild(icon);
     btnDelete.addEventListener("click", () => {
-      Api.deleteWork(this.id).then(() => {
-        // Supprime du tableau app.projets
-        app.projets = app.projets.filter((p) => p.id !== this.id);
-        // Supprime du DOM de la popup
-        figure.remove();
-        // Met à jour la galerie principale
-        const gallery = document.getElementById("gallery");
-        gallery.innerHTML = "";
-        app.projets.forEach((projet) => {
-          gallery.appendChild(projet.createGalleryHTML());
-        });
-      }).catch((err) => console.error("Erreur suppression :", err));
+      Api.deleteWork(this.id)
+        .then(() => {
+          // Supprime du tableau app.projets
+          app.projets = app.projets.filter((p) => p.id !== this.id);
+          // Supprime du DOM de la popup
+          figure.remove();
+          // Met à jour la galerie principale
+          const gallery = document.getElementById("gallery");
+          gallery.innerHTML = "";
+          app.projets.forEach((projet) => {
+            gallery.appendChild(projet.createGalleryHTML());
+          });
+        })
+        .catch((err) => console.error("Erreur suppression :", err));
     });
 
     figure.appendChild(img);
@@ -70,7 +72,13 @@ class Projet {
   static chargerProjets(data) {
     const gallery = document.getElementById("gallery");
     data.forEach((work) => {
-      const projet = new Projet(work.id, work.userId, work.title, work.imageUrl, work.category);
+      const projet = new Projet(
+        work.id,
+        work.userId,
+        work.title,
+        work.imageUrl,
+        work.category,
+      );
       app.projets.push(projet); // ← app.projets
       gallery.appendChild(projet.createGalleryHTML());
     });
@@ -140,7 +148,8 @@ class Popup {
     this.popupContainer = document.getElementById(popupContainerId);
     this.btnClose = document.getElementById(btnCloseId);
 
-    if (btnOpenId) { // ← seulement si un btnOpenId est fourni
+    if (btnOpenId) {
+      // ← seulement si un btnOpenId est fourni
       this.btnOpen = document.getElementById(btnOpenId);
       this.btnOpen.addEventListener("click", () => this.open());
     }
@@ -190,53 +199,58 @@ class PopupAjout extends Popup {
     super("popup-ajout-container", null, "btn-close-ajout");
     this.preview = new PreviewUpload("upload-container");
     this.btnValider = document.getElementById("popup-button-valider");
-    this.btnValider.addEventListener("click", () => {
-      this.submitForm();
-    });
+    this.titre = document.getElementById("titre");
+    this.selectCategory = document.getElementById("select-category");
+    this.fileInput = document.getElementById("file-input");
+    this.btnValider.disabled = true;
+    this.titre.addEventListener("input", () => this.verifierFormulaire());
+    this.selectCategory.addEventListener("change", () => this.verifierFormulaire());
+    this.fileInput.addEventListener("change", () => this.verifierFormulaire());
+    this.btnValider.addEventListener("click", () => this.submitForm());
   }
 
-  open() {
-    this.chargerCategories();
-    super.open();
+  verifierFormulaire() {
+    const titre = this.titre.value;
+    const categorie = this.selectCategory.value;
+    const fichier = this.fileInput.files[0];
+
+    if (titre && categorie && fichier) {
+      this.btnValider.disabled = false;
+    } else {
+      this.btnValider.disabled = true;
+    }
   }
 
   chargerCategories() {
-    const select = document.getElementById("select-category");
-    select.innerHTML = "";
+    this.selectCategory.innerHTML = "";
     Api.fetchCategories().then((categories) => {
       categories.forEach((category) => {
         const option = document.createElement("option");
         option.value = category.id;
         option.textContent = category.name;
-        select.appendChild(option);
+        this.selectCategory.appendChild(option);
       });
     });
   }
 
   submitForm() {
-    // Étape 1 — Récupérer les valeurs des champs du formulaire
-    const title = document.getElementById("titre").value;
-    const category = document.getElementById("select-category").value;
-    const fileInput = document.getElementById("file-input");
-    const image = fileInput.files[0];
+    const title = this.titre.value;
+    const category = this.selectCategory.value;
+    const image = this.fileInput.files[0];
 
-    // Étape 2 — Vérifier que tous les champs sont remplis
     if (!title || !category || !image) {
       alert("Veuillez remplir tous les champs !");
-      return; // on arrête la fonction ici si un champ est vide
+      return;
     }
 
-    // Étape 3 — Construire le FormData
     const formData = new FormData();
     formData.append("title", title);
     formData.append("category", category);
     formData.append("image", image);
 
-    // Étape 4 — Envoyer à l'API et mettre à jour l'interface
-
-    const select = document.getElementById("select-category");
-    const categoryId = parseInt(select.value);
-    const categoryName = select.options[select.selectedIndex].text;
+    const categoryId = parseInt(this.selectCategory.value);
+    const categoryName =
+      this.selectCategory.options[this.selectCategory.selectedIndex].text;
 
     Api.addWork(formData)
       .then((newWork) => {
@@ -248,17 +262,15 @@ class PopupAjout extends Popup {
           {
             id: categoryId,
             name: categoryName,
-          }
+          },
         );
-        app.projets.push(projet); // ajoute au tableau en mémoire
+        app.projets.push(projet);
 
-        // Ajoute directement dans la galerie sans recharger la page
         const gallery = document.getElementById("gallery");
         gallery.appendChild(projet.createGalleryHTML());
 
-        // Ferme la popup et réinitialise le formulaire
         this.close();
-        document.getElementById("titre").value = "";
+        this.titre.value = "";
         this.preview.reset();
       })
       .catch((err) => console.error("Erreur ajout :", err));
@@ -306,13 +318,13 @@ class PreviewUpload {
 class Api {
   static fetchWorks() {
     return fetch("http://localhost:5678/api/works").then((response) =>
-      response.json()
+      response.json(),
     );
   }
 
   static fetchCategories() {
     return fetch("http://localhost:5678/api/categories").then((response) =>
-      response.json()
+      response.json(),
     );
   }
 
@@ -320,21 +332,21 @@ class Api {
     return fetch(`http://localhost:5678/api/works/${id}`, {
       method: "DELETE",
       headers: {
-        "accept": "*/*",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
-      }
+        accept: "*/*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
   }
 
   static chargerTout() {
-    Promise.all([Api.fetchWorks(), Api.fetchCategories()]).then(
-      ([works, categories]) => {
+    Promise.all([Api.fetchWorks(), Api.fetchCategories()])
+      .then(([works, categories]) => {
         Projet.chargerProjets(works);
         Filtre.chargerFiltres(categories);
         console.log("projets :", app.projets);
         console.log("filtres :", app.filtres);
-      }
-    ).catch((err) => console.error("Erreur de chargement :", err));
+      })
+      .catch((err) => console.error("Erreur de chargement :", err));
   }
 
   static login(email, password) {
@@ -342,9 +354,9 @@ class Api {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "accept": "application/json"
+        accept: "application/json",
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     }).then((response) => {
       if (!response.ok) throw new Error("Identifiants invalides");
       return response.json();
@@ -356,12 +368,12 @@ class Api {
     return fetch("http://localhost:5678/api/works", {
       method: "POST",
       headers: {
-        "accept": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}` 
+        accept: "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: formData
+      body: formData,
     }).then((response) => {
-      if (!response.ok) throw new Error("Erreur ajout");  
+      if (!response.ok) throw new Error("Erreur ajout");
       return response.json();
     });
   }
@@ -381,7 +393,10 @@ class Login {
     const form = document.getElementById("login-form");
 
     if (btnLogin) btnLogin.addEventListener("click", () => this.handleSubmit());
-    if (form) form.addEventListener("submit", () => { this.handleSubmit(); });
+    if (form)
+      form.addEventListener("submit", () => {
+        this.handleSubmit();
+      });
   }
 
   handleSubmit() {
@@ -412,7 +427,7 @@ class Login {
     if (this.token) {
       this.loginNav.textContent = "logout";
       this.loginNav.addEventListener("click", (e) => {
-        e.preventDefault()
+        e.preventDefault();
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         window.location.href = "index.html";
@@ -423,10 +438,10 @@ class Login {
   }
 
   /**
- * - Adapte l'interface selon que l'utilisateur est connecté ou non.
- * - Connecté → affiche le bouton popup et le mode édition, masque les filtres.
- * - Non connecté → masque le bouton popup et le mode édition, affiche les filtres.
- */
+   * - Adapte l'interface selon que l'utilisateur est connecté ou non.
+   * - Connecté → affiche le bouton popup et le mode édition, masque les filtres.
+   * - Non connecté → masque le bouton popup et le mode édition, affiche les filtres.
+   */
   updateUI() {
     const isLogged = Boolean(this.token);
 
@@ -482,5 +497,3 @@ class App {
 
 const app = new App();
 app.init();
-
-
