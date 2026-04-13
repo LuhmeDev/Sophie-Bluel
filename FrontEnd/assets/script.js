@@ -485,6 +485,7 @@ class App {
     this.login.checkAuth();
     this.login.updateUI();
     this.login.submitLogin();
+    this.setActiveNav();
 
     // On est sur index.html
     if (document.getElementById("gallery")) {
@@ -492,6 +493,14 @@ class App {
       this.popupGalerie = new PopupGalerie();
       this.popupAjout = new PopupAjout();
     }
+  }
+    setActiveNav() {
+    const links = document.querySelectorAll('nav ul li a');
+    links.forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add('active');
+      }
+    });
   }
 }
 
