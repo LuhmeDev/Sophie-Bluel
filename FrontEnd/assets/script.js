@@ -357,11 +357,11 @@ class Api {
       method: "POST",
       headers: {
         "accept": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}` // ← manquant
+        "Authorization": `Bearer ${localStorage.getItem("token")}` 
       },
       body: formData
     }).then((response) => {
-      if (!response.ok) throw new Error("Erreur ajout");  // ← manquant aussi
+      if (!response.ok) throw new Error("Erreur ajout");  
       return response.json();
     });
   }
@@ -423,7 +423,7 @@ class Login {
   }
 
   /**
- * Adapte l'interface selon que l'utilisateur est connecté ou non.
+ * - Adapte l'interface selon que l'utilisateur est connecté ou non.
  * - Connecté → affiche le bouton popup et le mode édition, masque les filtres.
  * - Non connecté → masque le bouton popup et le mode édition, affiche les filtres.
  */

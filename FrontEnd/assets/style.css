@@ -109,6 +109,7 @@ section {
 
 body {
   line-height: 1;
+  background-color:#FFFEF8 ;
 }
 
 ol,
@@ -283,7 +284,8 @@ input[type="submit"] {
 footer nav ul {
   display: flex;
   justify-content: flex-end;
-  margin: 2em;
+  padding: 2em;
+  background-color: white;
 }
 
 #filtrecontainer {
@@ -335,6 +337,13 @@ footer nav ul {
   gap: 20px;
 }
 
+#login-container{
+  display: flex;
+  flex-direction: column;
+  min-height: 1024px;
+  justify-content: space-between;
+}
+
 a {
   text-decoration: none;
 }
@@ -371,6 +380,17 @@ a:active {
   background-color: #1D6154;
   color: #FFFFFF;
   border: none;
+}
+
+#login-form{
+  display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+}
+
+#mdp-oublie{
+  text-decoration: underline;
 }
 
 h3 {
@@ -498,7 +518,7 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #e8f0f7;
+  background-color: #E8F1F6;
   border-radius: 8px;
   padding: 20px;
   gap: 10px;
@@ -513,17 +533,17 @@ h3 {
   cursor: pointer;
 }
 
-#upload-container label img {
-  width: 80px;
-  opacity: 0.4;
-}
-
 #upload-container label span {
-  background-color: #fff;
-  border: 1px solid #ccc;
+  background-color: #CBD6DC;
   border-radius: 20px;
-  padding: 8px 16px;
   font-size: 14px;
+  font-weight: 500;
+  width: 173px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #306685;
 }
 
 #upload-container p {
