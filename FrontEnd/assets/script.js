@@ -290,6 +290,9 @@ class PreviewUpload {
     this.fileInput = document.getElementById("file-input");
     this.previewImg = container.querySelector("img");
     this.text = container.querySelector("span");
+    this.text2 = container.querySelector("p");
+    this.label = container.querySelector("label");
+    
 
     this.defaultSrc = this.previewImg.src;
 
@@ -308,6 +311,8 @@ class PreviewUpload {
 
     if (this.text) {
       this.text.style.display = "none";
+      this.text2.style.display = "none";
+      this.label.style.margin = "0";
     }
   }
 
@@ -317,6 +322,8 @@ class PreviewUpload {
 
     if (this.text) {
       this.text.style.display = "inline";
+      this.text2.style.display = "inline";
+      this.label.style.margin = "20px 0";
     }
   }
 }

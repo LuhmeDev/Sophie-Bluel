@@ -542,7 +542,7 @@ h3 {
   justify-content: center;
   background-color: #E8F1F6;
   border-radius: 8px;
-  padding: 20px;
+  padding: 0 20px;
   gap: 10px;
   margin-bottom: 16px;
 }
@@ -553,6 +553,7 @@ h3 {
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  margin: 20px 0;
 }
 
 #upload-container label span {
