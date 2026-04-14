@@ -535,6 +535,10 @@ h3 {
   display: none;
 }
 
+#preview-img{
+  max-height: 170px;
+}
+
 #upload-container {
   display: flex;
   flex-direction: column;
