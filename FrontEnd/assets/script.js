@@ -339,7 +339,7 @@ class Api {
       method: "DELETE",
       headers: {
         accept: "*/*",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
   }
@@ -375,7 +375,7 @@ class Api {
       method: "POST",
       headers: {
         accept: "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
       body: formData,
     }).then((response) => {
@@ -387,7 +387,7 @@ class Api {
 
 class Login {
   constructor() {
-    this.token = localStorage.getItem("token");
+    this.token = sessionStorage.getItem("token");
     this.loginNav = document.getElementById("nav-login");
     this.btnPopup = document.getElementById("btn-open-popup-container");
     this.filtreContainer = document.getElementById("filtrecontainer");
@@ -411,8 +411,8 @@ class Login {
 
     Api.login(email, password)
       .then((data) => {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.userId);
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("userId", data.userId);
         window.location.href = "index.html";
       })
       .catch((err) => {
@@ -434,8 +434,8 @@ class Login {
       this.loginNav.textContent = "logout";
       this.loginNav.addEventListener("click", (e) => {
         e.preventDefault();
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("userId");
         window.location.href = "index.html";
       });
     } else {
