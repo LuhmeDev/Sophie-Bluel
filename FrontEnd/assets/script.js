@@ -202,11 +202,18 @@ class PopupAjout extends Popup {
     this.titre = document.getElementById("titre");
     this.selectCategory = document.getElementById("select-category");
     this.fileInput = document.getElementById("file-input");
+    this.chargerCategories();
     this.btnValider.disabled = true;
     this.titre.addEventListener("input", () => this.verifierFormulaire());
     this.selectCategory.addEventListener("change", () => this.verifierFormulaire());
     this.fileInput.addEventListener("change", () => this.verifierFormulaire());
     this.btnValider.addEventListener("click", () => this.submitForm());
+
+    this.btnPrecedent = document.getElementById("btn-precedent-ajout");
+    this.btnPrecedent.addEventListener("click", () => {
+    this.close();
+    app.popupGalerie.open();
+  });
   }
 
   verifierFormulaire() {
@@ -249,8 +256,7 @@ class PopupAjout extends Popup {
     formData.append("image", image);
 
     const categoryId = parseInt(this.selectCategory.value);
-    const categoryName =
-      this.selectCategory.options[this.selectCategory.selectedIndex].text;
+    const categoryName = this.selectCategory.options[this.selectCategory.selectedIndex].text;
 
     Api.addWork(formData)
       .then((newWork) => {

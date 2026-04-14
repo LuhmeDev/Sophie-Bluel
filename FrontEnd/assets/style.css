@@ -424,6 +424,16 @@ h3 {
   text-align: center;
 }
 
+#popup-button-valider:disabled{
+  background-color: #A7A7A7;
+}
+
+#btn-container{
+  display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
 
 #popup,
 #popup-ajout {
@@ -472,6 +482,14 @@ h3 {
   display: flex;
   width: 100%;
   justify-content: flex-end;
+}
+
+#btn-precedent-ajout{
+  background-color: transparent;
+  border: none;
+  font-weight: bold;
+  display: flex;
+  width: 100%;
 }
 
 #popup-button-container {
