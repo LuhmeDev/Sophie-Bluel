@@ -514,7 +514,7 @@ h3 {
   gap: 5px;
 }
 
-#btn-open-popup {
+.btn-open-popup {
   background-color: transparent;
   border: none;
 }
