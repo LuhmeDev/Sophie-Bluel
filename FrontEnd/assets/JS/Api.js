@@ -1,18 +1,20 @@
 export class Api {
+  static BASE_URL = "http://localhost:5678/api";
+
   static fetchWorks() {
-    return fetch("http://localhost:5678/api/works").then((response) =>
+    return fetch(`${Api.BASE_URL}/works`).then((response) =>
       response.json(),
     );
   }
 
   static fetchCategories() {
-    return fetch("http://localhost:5678/api/categories").then((response) =>
+    return fetch(`${Api.BASE_URL}/categories`).then((response) =>
       response.json(),
     );
   }
 
   static deleteWork(id) {
-    return fetch(`http://localhost:5678/api/works/${id}`, {
+    return fetch(`${Api.BASE_URL}/works/${id}`, {
       method: "DELETE",
       headers: {
         accept: "*/*",
@@ -24,13 +26,13 @@ export class Api {
   static chargerTout() {
     return Promise.all([Api.fetchWorks(), Api.fetchCategories()])
       .then(([works, categories]) => {
-        return { works, categories }; 
+        return { works, categories };
       })
       .catch((err) => console.error("Erreur de chargement :", err));
   }
 
   static login(email, password) {
-    return fetch("http://localhost:5678/api/users/login", {
+    return fetch(`${Api.BASE_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,12 +42,11 @@ export class Api {
     }).then((response) => {
       if (!response.ok) throw new Error("Identifiants invalides");
       return response.json();
-      // retourne { userId: 1, token: "eyJ..." }
     });
   }
 
   static addWork(formData) {
-    return fetch("http://localhost:5678/api/works", {
+    return fetch(`${Api.BASE_URL}/works`, {
       method: "POST",
       headers: {
         accept: "application/json",
