@@ -18,23 +18,20 @@ export class App {
     this.setActiveNav();
 
     // On est sur index.html
-  if (document.getElementById("gallery")) {
-     console.log("chargement lancé");
-    Api.chargerTout().then(({ works, categories }) => {
-       console.log("works reçus :", works.length);
-      Projet.chargerProjets(works);      
-      Filtre.chargerFiltres(categories); 
-
-      this.popupGalerie = new PopupGalerie();
-      this.popupAjout = new PopupAjout();
-    });
+    if (document.getElementById("gallery")) {
+      Api.chargerTout().then(({ works, categories }) => {
+        Projet.chargerProjets(works);
+        Filtre.chargerFiltres(categories);
+        this.popupGalerie = new PopupGalerie();
+        this.popupAjout = new PopupAjout();
+      });
+    }
   }
-  }
-    setActiveNav() {
-    const links = document.querySelectorAll('nav ul li a');
-    links.forEach(link => {
+  setActiveNav() {
+    const links = document.querySelectorAll("nav ul li a");
+    links.forEach((link) => {
       if (link.href === window.location.href) {
-        link.classList.add('active');
+        link.classList.add("active");
       }
     });
   }
