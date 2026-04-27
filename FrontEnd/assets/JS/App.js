@@ -3,6 +3,8 @@ import { Projet } from "./Projet.js";
 import { Filtre } from "./Filtre.js";
 import { Login } from "./Login.js";
 import { PopupGalerie, PopupAjout } from "./Popup.js";
+import { setActiveNav } from "./Active-nav.js";
+setActiveNav();
 
 export class App {
   constructor() {
@@ -15,7 +17,6 @@ export class App {
     this.login.checkAuth();
     this.login.updateUI();
     this.login.submitLogin();
-    this.setActiveNav();
 
     // On est sur index.html
     if (document.getElementById("gallery")) {
@@ -27,12 +28,12 @@ export class App {
       });
     }
   }
-  setActiveNav() {
-    const links = document.querySelectorAll("nav ul li a");
-    links.forEach((link) => {
-      if (link.href === window.location.href) {
-        link.classList.add("active");
-      }
-    });
-  }
+  // setActiveNav() {
+  //   const links = document.querySelectorAll("nav ul li a");
+  //   links.forEach((link) => {
+  //     if (link.href === window.location.href) {
+  //       link.classList.add("active");
+  //     }
+  //   });
+  // }
 }

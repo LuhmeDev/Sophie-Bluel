@@ -1,4 +1,6 @@
 import { Api } from "./Api.js";
+import { setActiveNav } from "./Active-nav.js";
+setActiveNav();
 
 export class Login {
   constructor() {

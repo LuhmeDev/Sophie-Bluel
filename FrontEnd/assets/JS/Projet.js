@@ -1,4 +1,4 @@
-import { app } from "./main.js";
+import { app } from "./App-init.js";
 import {Api} from "./Api.js";
  
 export class Projet {

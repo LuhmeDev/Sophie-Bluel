@@ -1,4 +1,4 @@
-import { app } from "./main.js";
+import { app } from "./App-init.js";
 import { Projet } from "./Projet.js";
 
 export class Filtre {
